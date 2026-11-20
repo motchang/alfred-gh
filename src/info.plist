@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0"><dict>
+<key>bundleid</key><string>com.github.motchang.alfred-gh</string>
+<key>name</key><string>alfred-gh</string>
+<key>createdby</key><string>motchang</string>
+<key>webaddress</key><string>https://github.com/motchang/alfred-gh</string>
+<key>version</key><string>0.0.0</string>
+<key>readme</key><string>Fuzzy-search your GitHub repositories with the gh CLI. See https://github.com/motchang/alfred-gh</string>
+<key>description</key><string>gh &lt;repo&gt; [pull|issues|actions|...]</string>
+<key>connections</key><dict>
+  <key>FILTER-0001</key><array><dict>
+    <key>destinationuid</key><string>OPENURL-0001</string>
+    <key>modifiers</key><integer>0</integer><key>modifiersubtext</key><string></string>
+    <key>vitoclose</key><false/></dict></array>
+</dict>
+<key>objects</key><array>
+  <dict><key>type</key><string>alfred.workflow.input.scriptfilter</string>
+    <key>uid</key><string>FILTER-0001</string><key>version</key><integer>3</integer>
+    <key>config</key><dict>
+      <key>keyword</key><string>gh</string>
+      <key>withspace</key><true/>
+      <key>argumenttype</key><integer>1</integer>
+      <key>alfredfiltersresults</key><false/>
+      <key>queuedelaycustom</key><integer>1</integer>
+      <key>queuedelayimmediatelyinitially</key><true/>
+      <key>queuedelaymode</key><integer>0</integer>
+      <key>queuemode</key><integer>2</integer>
+      <key>runningsubtext</key><string>Loading repositories…</string>
+      <key>title</key><string>Search GitHub repositories</string>
+      <key>type</key><integer>8</integer>
+      <key>scriptargtype</key><integer>1</integer>
+      <key>scriptfile</key><string>filter.sh</string>
+      <key>script</key><string></string>
+      <key>escaping</key><integer>0</integer>
+    </dict></dict>
+  <dict><key>type</key><string>alfred.workflow.action.openurl</string>
+    <key>uid</key><string>OPENURL-0001</string><key>version</key><integer>1</integer>
+    <key>config</key><dict><key>url</key><string>{query}</string></dict></dict>
+</array>
+<key>uidata</key><dict>
+  <key>FILTER-0001</key><dict><key>xpos</key><integer>50</integer><key>ypos</key><integer>50</integer></dict>
+  <key>OPENURL-0001</key><dict><key>xpos</key><integer>300</integer><key>ypos</key><integer>50</integer></dict>
+</dict>
+<key>userconfigurationconfig</key><array>
+  <dict>
+    <key>type</key><string>textfield</string>
+    <key>variable</key><string>GH_USER</string>
+    <key>label</key><string>GitHub account</string>
+    <key>description</key><string>gh login to use (see `gh auth status`). Leave empty to use gh's active account.</string>
+    <key>config</key><dict>
+      <key>default</key><string></string>
+      <key>placeholder</key><string>(active gh account)</string>
+      <key>required</key><false/>
+      <key>trim</key><true/>
+    </dict>
+  </dict>
+  <dict>
+    <key>type</key><string>textfield</string>
+    <key>variable</key><string>CACHE_TTL_HOURS</string>
+    <key>label</key><string>Cache TTL (hours)</string>
+    <key>description</key><string>The repository list is refreshed in the background after this many hours.</string>
+    <key>config</key><dict>
+      <key>default</key><string>24</string>
+      <key>placeholder</key><string>24</string>
+      <key>required</key><false/>
+      <key>trim</key><true/>
+    </dict>
+  </dict>
+</array>
+</dict></plist>
