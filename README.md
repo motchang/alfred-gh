@@ -36,6 +36,12 @@ Download `alfred-gh.alfredworkflow` from the
 | `gh my` | GitHub searches for your open PRs and issues, above the repo results |
 | `gh my pr` / `gh my issues` | only the PR / issue search |
 
+A trailing word is treated as a destination only when something comes before
+it: `gh pull` searches for repositories matching "pull" and opens their root.
+
+If the fetch fails (gh missing, not logged in, `GH_USER` not logged in to gh),
+the error is shown with a hint; the next keystroke retries.
+
 Repositories come from `/user/repos` with
 `affiliation=owner,collaborator,organization_member`.
 
