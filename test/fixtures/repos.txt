@@ -1,0 +1,6 @@
+acme/widget-core
+acme/widget-converter
+acme/gadget
+octo/dotfiles
+octo/widgets-docs
+octo/pullman

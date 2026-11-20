@@ -9,7 +9,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
-      - run: make lint
+      - run: make lint test
       - name: Build
         run: make VERSION="${GITHUB_REF_NAME#v}"
       - name: Create release

@@ -1,0 +1,6 @@
+{"total_count": 1, "incomplete_results": false, "items": [
+  {"url": "https://api.github.com/repos/acme/gadget/issues/6", "id": 2006, "number": 6, "state": "open",
+   "title": "Draft: new gizmo API", "user": {"login": "tester", "id": 2, "type": "User"},
+   "updated_at": "2026-02-02T09:00:00Z", "draft": true,
+   "pull_request": {"html_url": "https://github.com/acme/gadget/pull/6"},
+   "html_url": "https://github.com/acme/gadget/pull/6"}]}

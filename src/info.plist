@@ -12,6 +12,14 @@
   <key>FILTER-0001</key><array><dict>
     <key>destinationuid</key><string>OPENURL-0001</string>
     <key>modifiers</key><integer>0</integer><key>modifiersubtext</key><string></string>
+    <key>vitoclose</key><false/></dict>
+    <dict>
+    <key>destinationuid</key><string>PRFILTER-0001</string>
+    <key>modifiers</key><integer>1048576</integer><key>modifiersubtext</key><string></string>
+    <key>vitoclose</key><false/></dict></array>
+  <key>PRFILTER-0001</key><array><dict>
+    <key>destinationuid</key><string>OPENURL-0001</string>
+    <key>modifiers</key><integer>0</integer><key>modifiersubtext</key><string></string>
     <key>vitoclose</key><false/></dict></array>
 </dict>
 <key>objects</key><array>
@@ -34,6 +42,26 @@
       <key>script</key><string></string>
       <key>escaping</key><integer>0</integer>
     </dict></dict>
+  <dict><key>type</key><string>alfred.workflow.input.scriptfilter</string>
+    <key>uid</key><string>PRFILTER-0001</string><key>version</key><integer>3</integer>
+    <key>config</key><dict>
+      <key>keyword</key><string></string>
+      <key>withspace</key><true/>
+      <key>argumenttype</key><integer>1</integer>
+      <key>alfredfiltersresults</key><true/>
+      <key>alfredfiltersresultsmatchmode</key><integer>0</integer>
+      <key>queuedelaycustom</key><integer>1</integer>
+      <key>queuedelayimmediatelyinitially</key><true/>
+      <key>queuedelaymode</key><integer>0</integer>
+      <key>queuemode</key><integer>1</integer>
+      <key>runningsubtext</key><string>Loading pull requests…</string>
+      <key>title</key><string>Open pull requests</string>
+      <key>type</key><integer>8</integer>
+      <key>scriptargtype</key><integer>1</integer>
+      <key>scriptfile</key><string>prs.sh</string>
+      <key>script</key><string></string>
+      <key>escaping</key><integer>0</integer>
+    </dict></dict>
   <dict><key>type</key><string>alfred.workflow.action.openurl</string>
     <key>uid</key><string>OPENURL-0001</string><key>version</key><integer>1</integer>
     <key>config</key><dict><key>url</key><string>{query}</string></dict></dict>
@@ -41,6 +69,7 @@
 <key>uidata</key><dict>
   <key>FILTER-0001</key><dict><key>xpos</key><integer>50</integer><key>ypos</key><integer>50</integer></dict>
   <key>OPENURL-0001</key><dict><key>xpos</key><integer>300</integer><key>ypos</key><integer>50</integer></dict>
+  <key>PRFILTER-0001</key><dict><key>xpos</key><integer>50</integer><key>ypos</key><integer>200</integer></dict>
 </dict>
 <key>userconfigurationconfig</key><array>
   <dict>
@@ -63,6 +92,31 @@
     <key>config</key><dict>
       <key>default</key><string>24</string>
       <key>placeholder</key><string>24</string>
+      <key>required</key><false/>
+      <key>trim</key><true/>
+    </dict>
+  </dict>
+  <dict>
+    <key>type</key><string>popupbutton</string>
+    <key>variable</key><string>PR_SCOPE</string>
+    <key>label</key><string>⌘+Enter PR list</string>
+    <key>description</key><string>Which open pull requests ⌘+Enter on a repository lists.</string>
+    <key>config</key><dict>
+      <key>default</key><string>mine</string>
+      <key>pairs</key><array>
+        <array><string>Mine (authored by me)</string><string>mine</string></array>
+        <array><string>All</string><string>all</string></array>
+      </array>
+    </dict>
+  </dict>
+  <dict>
+    <key>type</key><string>textfield</string>
+    <key>variable</key><string>PR_CACHE_MINUTES</string>
+    <key>label</key><string>PR cache TTL (minutes)</string>
+    <key>description</key><string>A repository's pull request list is refreshed in the background after this many minutes.</string>
+    <key>config</key><dict>
+      <key>default</key><string>5</string>
+      <key>placeholder</key><string>5</string>
       <key>required</key><false/>
       <key>trim</key><true/>
     </dict>
