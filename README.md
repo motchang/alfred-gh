@@ -33,7 +33,7 @@ Download `alfred-gh.alfredworkflow` from the
 | `gh <query> settings` (`setting`) | `.../settings` |
 | `gh <query> branches` (`branch`) | `.../branches` |
 | `gh <query> releases` (`release`) | `.../releases` |
-| `gh my` | GitHub searches for your open PRs and issues, above the repo results |
+| `gh my` | GitHub searches for open PRs involving you (`involves:`) and your open issues, above the repo results |
 | `gh my pr` / `gh my issues` | only the PR / issue search |
 
 ### ⌘+Enter: open pull requests of a repository
@@ -49,10 +49,14 @@ filter it by number or title; Enter opens the PR.
 - `PR_SCOPE=all`: the 20 most recently updated open PRs. The first item opens
   `https://github.com/<owner>/<repo>/pulls`.
 
-⌘+Enter on the `gh my` item "My open pull requests" opens the same list for
-your open PRs across all repositories (search `is:pr is:open author:<you>`,
-20 most recently updated). Each PR shows its `owner/repo` as the subtitle, and
-typing also filters by repository. The first item opens the GitHub search.
+Enter on the `gh my` item "Open pull requests involving me" opens the GitHub
+search `is:pr is:open involves:<you>`: PRs you authored, are assigned to, are
+mentioned in, or commented on. ⌘+Enter on it opens the same list in Alfred
+(20 most recently updated). Each PR shows `owner/repo · <role>` as the
+subtitle, where role is `author` (you opened it), `assigned` (you are an
+assignee) or `involved` (mentioned, commented, etc.); typing also filters by
+repository. The first item opens the GitHub search. `gh my issues` still
+searches only issues authored by you.
 
 The list is cached per account, scope and repository for `PR_CACHE_MINUTES`.
 Without a cache it is fetched while you wait (up to about 10 seconds); a stale
@@ -95,7 +99,7 @@ Set these in Alfred under the workflow's **Configure Workflow…** button.
 | `PR_SCOPE` | `mine` | ⌘+Enter lists your open PRs (`mine`) or all open PRs (`all`). Other values mean `mine`. |
 | `PR_CACHE_MINUTES` | `5` | Age after which a repository's PR list is refreshed. |
 
-For `gh my`, the author is `GH_USER` if set; otherwise the login of the active
+For `gh my`, "you" is `GH_USER` if set; otherwise the login of the active
 account (`gh api user`), which is cached.
 
 ## Cache
@@ -104,7 +108,7 @@ The repository list is cached in Alfred's workflow cache directory
 (`~/Library/Caches/com.runningwithcrayons.Alfred/Workflow Data/com.github.motchang.alfred-gh/`),
 one file per account (`repos-<GH_USER>.txt`, or `repos-active.txt`). PR lists
 for ⌘+Enter are stored as `prs-<account>-<scope>-<owner>__<repo>.json`, and
-your PRs across repositories as `prs-<account>-my-<login>.json`.
+PRs involving you across repositories as `prs-<account>-involves-<login>.json`.
 
 - On the first run there is no cache: the workflow shows "Building repository
   cache…" and fetches in the background; results appear automatically when done.

@@ -56,20 +56,20 @@ else
 fi
 needle="${(j: :)words}"
 
-# gh my [pr|issue]: search pages for open PRs / issues authored by you
+# gh my [pr|issue]: search pages for open PRs involving you / issues authored by you
 my_items='[]'
 if [ "${words[1]:l}" = my ]; then
   login=$(resolve_login)
   [ -z "$login" ] && fail_item "Could not determine your GitHub login" "Run: gh auth login, or set GH_USER"
   valid_login "$login" || fail_item "Invalid GitHub login: $login" "Check GH_USER"
   my_items=$(jq -n -c --arg u "$login" --arg k "${${sub/pulls/pr}/issues/issue}" '
-    [ {k: "pr",    t: "My open pull requests", q: "is:pr state:open author:\($u)",    ty: "pullrequests"},
+    [ {k: "pr",    t: "Open pull requests involving me", q: "is:pr is:open involves:\($u)",    ty: "pullrequests"},
       {k: "issue", t: "My open issues",        q: "is:issue state:open author:\($u)", ty: "issues"} ]
     | map(select($k == "" or (.k | startswith($k[0:2]))))
     | map(("https://github.com/search?q=" + (.q | @uri) + "&type=" + .ty) as $url
           | {uid: ("my-" + .k), title: .t, subtitle: $url, arg: $url, quicklookurl: $url,
             mods: {cmd: (if .k == "pr"
-              then {arg: "", valid: true, subtitle: "⌘ List my open pull requests",
+              then {arg: "", valid: true, subtitle: "⌘ List open pull requests involving me",
                     variables: {repo: "", pr_mode: "my"}}
               else {valid: false, subtitle: $url} end)}})')
 fi
