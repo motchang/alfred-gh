@@ -36,6 +36,30 @@ Download `alfred-gh.alfredworkflow` from the
 | `gh my` | GitHub searches for your open PRs and issues, above the repo results |
 | `gh my pr` / `gh my issues` | only the PR / issue search |
 
+### ⌘+Enter: open pull requests of a repository
+
+Press ⌘+Enter on any repository result (with or without a trailing
+`pull`/`issues`/...) to open a second list with that repository's open pull
+requests, shown as `#<number> <title>` (with ` (draft)` for drafts). Type to
+filter it by number or title; Enter opens the PR.
+
+- `PR_SCOPE=mine` (default): only PRs authored by you (`GH_USER`, or the active
+  account's login), found with the search API. The first item opens the
+  repository's PR page filtered to `is:pr is:open author:<you>`.
+- `PR_SCOPE=all`: the 20 most recently updated open PRs. The first item opens
+  `https://github.com/<owner>/<repo>/pulls`.
+
+⌘+Enter on the `gh my` item "My open pull requests" opens the same list for
+your open PRs across all repositories (search `is:pr is:open author:<you>`,
+20 most recently updated). Each PR shows its `owner/repo` as the subtitle, and
+typing also filters by repository. The first item opens the GitHub search.
+
+The list is cached per account, scope and repository for `PR_CACHE_MINUTES`.
+Without a cache it is fetched while you wait (up to about 10 seconds); a stale
+cache is shown immediately and refreshed in the background. If that refresh
+fails, the stale list stays and the first item says `(refresh failed: …)`.
+Requests to GitHub time out after 20 seconds (5 minutes for the repository list).
+
 A trailing word is treated as a destination only when something comes before
 it: `gh pull` searches for repositories matching "pull" and opens their root.
 
@@ -68,6 +92,8 @@ Set these in Alfred under the workflow's **Configure Workflow…** button.
 | --- | --- | --- |
 | `GH_USER` | empty | gh account to use (one of the logins in `gh auth status`). Empty uses gh's active account. When set, the workflow runs `gh` with `GH_TOKEN=$(gh auth token --user "$GH_USER")`, so it works without switching the active account. |
 | `CACHE_TTL_HOURS` | `24` | Age after which the repository list is refreshed. |
+| `PR_SCOPE` | `mine` | ⌘+Enter lists your open PRs (`mine`) or all open PRs (`all`). Other values mean `mine`. |
+| `PR_CACHE_MINUTES` | `5` | Age after which a repository's PR list is refreshed. |
 
 For `gh my`, the author is `GH_USER` if set; otherwise the login of the active
 account (`gh api user`), which is cached.
@@ -76,7 +102,9 @@ account (`gh api user`), which is cached.
 
 The repository list is cached in Alfred's workflow cache directory
 (`~/Library/Caches/com.runningwithcrayons.Alfred/Workflow Data/com.github.motchang.alfred-gh/`),
-one file per account (`repos-<GH_USER>.txt`, or `repos-active.txt`).
+one file per account (`repos-<GH_USER>.txt`, or `repos-active.txt`). PR lists
+for ⌘+Enter are stored as `prs-<account>-<scope>-<owner>__<repo>.json`, and
+your PRs across repositories as `prs-<account>-my-<login>.json`.
 
 - On the first run there is no cache: the workflow shows "Building repository
   cache…" and fetches in the background; results appear automatically when done.
@@ -93,7 +121,10 @@ To force a refresh, delete the cache files.
 make                 # dist/alfred-gh.alfredworkflow
 make VERSION=1.2.3   # stamp the version into info.plist
 make lint
+make test            # offline smoke tests with fixtures; gh is stubbed, no network
 ```
+
+CI runs `make lint test build` on macOS for every push and pull request.
 
 Pushing a `v*` tag builds the workflow and publishes a GitHub Release.
 

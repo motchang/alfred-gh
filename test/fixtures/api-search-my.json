@@ -1,0 +1,9 @@
+{"total_count": 2, "incomplete_results": false, "items": [
+  {"number": 6, "title": "Draft: new gizmo API", "user": {"login": "tester"}, "state": "open",
+   "repository_url": "https://api.github.com/repos/acme/gadget", "updated_at": "2026-02-02T09:00:00Z",
+   "draft": true, "pull_request": {"html_url": "https://github.com/acme/gadget/pull/6"},
+   "html_url": "https://github.com/acme/gadget/pull/6"},
+  {"number": 3, "title": "Fix typo", "user": {"login": "tester"}, "state": "open",
+   "repository_url": "https://api.github.com/repos/octo/dotfiles", "updated_at": "2026-01-15T09:00:00Z",
+   "draft": false, "pull_request": {"html_url": "https://github.com/octo/dotfiles/pull/3"},
+   "html_url": "https://github.com/octo/dotfiles/pull/3"}]}

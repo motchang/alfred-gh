@@ -10,8 +10,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
-      - run: make lint
-      - run: make
+      - run: make lint test build
       - uses: actions/upload-artifact@v4
         with:
           name: alfred-gh
