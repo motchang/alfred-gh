@@ -19,6 +19,7 @@ if [ "\$STUB_GH" = ok ] || [ "\$STUB_GH" = fail ]; then
     [ "\$STUB_GH" = fail ] && { print -u2 "HTTP 404: Not Found"; exit 1; }
     jqx=. file=""
     while (( \$# )); do
+      [[ \$1 == q=* ]] && print -r -- "\$1" >> "$TMP/gh-queries"
       case \$1 in
         --jq) jqx=\$2; shift ;;
         search/issues) file=\${file:-\$fix/api-search.json} ;;
@@ -58,7 +59,7 @@ p() { zsh src/prs.sh "$@"; }
 o=$(f wcore);           check "fuzzy wcore ranks widget-core first" "$o" '.items[0].uid == "acme/widget-core"'
 o=$(f "widget-core pull"); check "trailing pull opens /pulls" "$o" '.items[0].arg == "https://github.com/acme/widget-core/pulls"'
 o=$(f pull);            check "single word pull keeps root URLs" "$o" '.items[0].arg == "https://github.com/octo/pullman" and all(.items[]; .arg | test("/pulls$") | not)'
-o=$(f "my pr");          check "my pr searches author=GH_USER" "$o" '.items[0].arg | contains("author%3Atester") and contains("type=pullrequests")'
+o=$(f "my pr");          check "my pr searches involves:GH_USER" "$o" '.items[0] | .title == "Open pull requests involving me" and .arg == "https://github.com/search?q=is%3Apr%20is%3Aopen%20involves%3Atester&type=pullrequests"'
 check "my pr cmd mod opens my PR list" "$o" '.items[0].mods.cmd | .valid and .arg == "" and .variables == {repo: "", pr_mode: "my"}'
 o=$(f "my issues");     check "my issues has no usable cmd mod" "$o" '.items[0].mods.cmd.valid == false'
 for q in '*' '[' 'a\' '"'; do
@@ -102,13 +103,15 @@ o=$(repo=acme/gadget PR_SCOPE=all STUB_GH=ok p)
 check "fetch all: maps /pulls response" "$o" '[.items[].title] == ["Open pull requests page", "#7 Speed up gizmo", "#6 Draft: new gizmo API (draft)"] and .items[1].arg == "https://github.com/acme/gadget/pull/7" and .items[1].match == "7 Speed up gizmo"'
 check "fetch all: cache written" "$(cat $TMP/cache/prs-tester-all-acme__gadget.json)" 'length == 2'
 o=$(repo=acme/gadget STUB_GH=ok p)
-check "fetch mine: maps search response" "$o" '[.items[].title] == ["Open my pull requests in acme/gadget", "#6 Draft: new gizmo API (draft)"]'
+check "fetch mine: maps search response" "$o" '[.items[].title] == ["Open my pull requests in acme/gadget", "#6 Draft: new gizmo API (draft)"] and .items[1].subtitle == ""'
+check "fetch mine: query uses author:" "$(tail -1 $TMP/gh-queries | jq -R .)" '. == "q=repo:acme/gadget is:pr is:open author:tester"'
 o=$(pr_mode=my repo=acme/widget-core PR_SCOPE=all STUB_GH=ok p)
-check "fetch my: PRs across repos" "$o" '[.items[] | [.title, .subtitle]] == [["Open my pull requests", "https://github.com/search?q=is%3Apr%20state%3Aopen%20author%3Atester&type=pullrequests"], ["#6 Draft: new gizmo API (draft)", "acme/gadget"], ["#3 Fix typo", "octo/dotfiles"]] and .items[2].match == "3 Fix typo octo/dotfiles"'
-check "fetch my: cache keyed by login" "$(cat $TMP/cache/prs-tester-my-tester.json)" 'length == 2'
-print -r -- '[]' > "$TMP/cache/prs-other-my-other.json"
+check "fetch my: PRs involving me with roles" "$o" '[.items[] | [.title, .subtitle]] == [["Open pull requests involving me", "https://github.com/search?q=is%3Apr%20is%3Aopen%20involves%3Atester&type=pullrequests"], ["#6 Draft: new gizmo API (draft)", "acme/gadget · author"], ["#3 Fix typo", "octo/dotfiles · assigned"], ["#9 Review wanted", "octo/tools · involved"]] and .items[2].match == "3 Fix typo octo/dotfiles"'
+check "fetch my: query uses involves:" "$(tail -1 $TMP/gh-queries | jq -R .)" '. == "q=is:pr is:open involves:tester"'
+check "fetch my: cache keyed involves-<login>" "$(cat $TMP/cache/prs-tester-involves-tester.json)" 'length == 3'
+print -r -- '[]' > "$TMP/cache/prs-other-involves-other.json"
 o=$(pr_mode=my GH_USER=other p)
-check "my: empty list" "$o" '.items[1] | .title == "No open pull requests by other" and .valid == false'
+check "my: empty list" "$o" '.items[1] | .title == "No open pull requests involving other" and .valid == false'
 o=$(pr_mode=my GH_USER='bad;user' p)
 check "my: invalid login is an error item" "$o" '.items[0].title | startswith("Invalid GitHub login")'
 o=$(repo=acme/missing PR_SCOPE=all STUB_GH=fail p)
