@@ -85,8 +85,12 @@ o=$(repo=octo/dotfiles p)
 check "mine: empty list" "$o" '.items[1].title == "No open pull requests by tester" and .items[1].valid == false'
 o=$(repo='acme/../x;y' p)
 check "invalid repo is an error item" "$o" '.items[0] | (.title | startswith("Invalid repository")) and .valid == false'
-o=$(repo='acme/.hidden' p)
-check "repo part starting with . is rejected" "$o" '.items[0].valid == false'
+o=$(repo=acme/.github PR_SCOPE=all STUB_GH=ok p)
+check "dot-prefixed repo name is accepted" "$o" '.items[0] | .title == "Open pull requests page" and .arg == "https://github.com/acme/.github/pulls"'
+for r in acme/. acme/.. ./x ../x .acme/x; do
+  o=$(repo=$r p)
+  check "repo $r is rejected" "$o" '.items[0] | (.title | startswith("Invalid repository")) and .valid == false'
+done
 o=$(repo=acme/widget-core GH_USER='bad;user' p)
 check "invalid login is an error item" "$o" '.items[0].title | startswith("Invalid GitHub login")'
 o=$(p)
