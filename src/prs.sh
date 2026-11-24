@@ -36,9 +36,9 @@ repo=${repo:-}
 if [ "$pr_mode" = my ]; then
   repo=""
 else
-  # owner/name; no part may start with "." (rules out . and ..)
-  part='[A-Za-z0-9_-][A-Za-z0-9._-]*'
-  [[ $repo =~ "^$part/$part\$" ]] \
+  # owner/name; owners never start with "." but names may (e.g. .github),
+  # so only the exact names . and .. are rejected
+  [[ $repo =~ '^[A-Za-z0-9_-][A-Za-z0-9._-]*/[A-Za-z0-9._-]+$' && ${repo#*/} != (.|..) ]] \
     || fail_item "Invalid repository: ${repo:-(none)}" "Use ⌘+Enter on a repository in the gh filter"
 fi
 login=""
